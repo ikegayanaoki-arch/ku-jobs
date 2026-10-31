@@ -54,23 +54,29 @@ function aggregate(records) {
 function sourceLink(r) {
  return `<a class="provenance" href="${(r.pdf.startsWith('https://') ? esc(r.pdf) : encodeURI(r.pdf))}#page=${r.page}" target="_blank" rel="noopener"><span class="source-year">${r.year}年度</span><span class="badge degree-${degreeClass(r.degree)}">${degreeLabel(r.degree)}</span><span>${esc(r.faculty)}</span><span class="source-arrow" aria-hidden="true">PDF ↗</span></a>`;
 }
+function groupedSources(records) {
+ return unique(records.map(r=>r.year)).sort((a,b)=>b-a).map(year=>`<section class="year-group"><h4>${year}年度<span>${era(year)}</span></h4><div>${records.filter(r=>r.year===year).map(sourceLink).join('')}</div></section>`).join('');
+}
 function render() {
  controls();
  const selected=data.filter(r=>(!state.year||r.year===Number(state.year))&&(!state.degree||r.degree===state.degree)&&(!state.faculties.length||state.faculties.includes(r.faculty))).sort((a,b)=>b.year-a.year);
  const entries=aggregate(selected);
  $('selection').textContent='現在の表示条件';
+ $('year-value').textContent=state.year?`${state.year}年度`:'すべての年度';
+ $('degree-value').textContent=degreeLabel(state.degree)||'すべての課程';
+ $('units-value').textContent=state.faculties.length?`${state.faculties.length}件を選択中`:'すべて';
  $('result-count').textContent=`${entries.length.toLocaleString()} 件`;
  $('active-filters').innerHTML=`<span class="condition"><span class="condition-label">年度</span><strong>${state.year ? `${state.year}年度（${era(Number(state.year))}）` : 'すべての年度'}</strong></span><span class="condition"><span class="condition-label">課程</span><strong class="badge degree-${degreeClass(state.degree)}">${degreeLabel(state.degree) || 'すべての課程'}</strong></span><span class="condition"><span class="condition-label">学部・学府</span><strong>${state.faculties.length?state.faculties.map(n=>`<span class="selected-unit">${esc(n)}</span>`).join(''):'すべての学部・学府'}</strong></span>`;
  const maxCount=entries[0]?.records.length || 1;
  const legend=['学部','修士','博士'].map(d=>`<span class="legend-item"><span class="degree-dot degree-${degreeClass(d)}" aria-hidden="true"></span>${degreeLabel(d)}</span>`).join('');
  const unavailable=selected.filter(r=>!r.hasDestinations);
  $('results').innerHTML=selected.length ? `
-  <div class="chart-legend" aria-label="課程の色分け">${legend}</div><div class="merged-list"><div class="list-heading"><span>就職先</span><span>掲載件数（降順）</span></div>
-  ${entries.length?entries.map(e=>{
+  <div class="chart-legend" aria-label="課程の色分け">${legend}</div><div class="merged-list"><div class="list-heading"><span>順位 / 就職先</span><span>掲載件数（降順）</span></div>
+  ${entries.length?entries.map((e,index)=>{
  const counts=['学部','修士','博士'].map(d=>({degree:d,count:e.records.filter(r=>r.degree===d).length}));
  const bars=counts.filter(c=>c.count).map(c=>`<span class="bar-segment degree-${degreeClass(c.degree)}" style="width:${(c.count/maxCount*100).toFixed(4)}%"></span>`).join('');
  const breakdown=counts.filter(c=>c.count).map(c=>`${degreeLabel(c.degree)} ${c.count}件`).join('、');
- return `<details class="destination-row"><summary><span class="destination-name">${esc(e.name)}</span><span class="count-chart"><span class="bar-track" aria-hidden="true">${bars}</span><span class="source-count"><strong>${e.records.length}</strong> 件 <span class="chevron" aria-hidden="true">⌄</span></span><span class="sr-only">掲載件数。内訳：${breakdown}</span></span></summary><div class="provenance-list">${e.records.map(sourceLink).join('')}</div></details>`;}).join(''):'<p class="no-destinations">この条件の就職先は公開されていません。</p>'}</div>
+ return `<details class="destination-row"><summary><span class="destination-title"><span class="rank">${index+1}</span><span class="destination-name">${esc(e.name)}</span></span><span class="count-chart"><span class="bar-track" aria-hidden="true">${bars}</span><span class="source-count"><strong>${e.records.length}</strong> 件 <span class="chevron" aria-hidden="true">⌄</span></span><span class="sr-only">掲載件数。内訳：${breakdown}</span></span></summary><div class="provenance-list">${groupedSources(e.records)}</div></details>`;}).join(''):'<p class="no-destinations">この条件の就職先は公開されていません。</p>'}</div>
   <div class="list-footnote">同じ名称の掲載先を合算しています。掲載元の件数は就職者数ではありません。</div>
   ${unavailable.length?`<details class="unavailable"><summary>非公開・記載なしの資料（${unavailable.length} 件）</summary>${unavailable.map(r=>`<div class="unavailable-row">${sourceLink(r)}<p>${r.private?'少人数のため非公開':'元資料に就職先の記載なし'}</p></div>`).join('')}</details>`:''}
   <details class="source-documents"><summary>元資料・抽出テキストを確認（${selected.length} 区分）</summary>${selected.map(r=>`<details class="source-record"><summary>${r.year}年度 · ${degreeLabel(r.degree)} · ${esc(r.faculty)}</summary>${sourceLink(r)}${r.transcribed?'<p class="card-note">この年度は画像から転記しています。表記は元PDFでも確認してください。</p>':''}<pre>${esc(r.source)}</pre></details>`).join('')}</details>

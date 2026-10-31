@@ -2,27 +2,22 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>九州大学｜就職先アーカイブ</title>
+<title>九州大学 就職先一覧</title>
 <link rel="stylesheet" href="style.css">
 <script src="employment_data.js" defer></script><script src="app.js" defer></script>
 </head>
 <body>
-<header><a class="brand" href="index.html"><span class="mark">Q</span><span>九州大学 <small>就職先アーカイブ</small></span></a><a class="source" href="https://www.kyushu-u.ac.jp/ja/education/employment/situation/place" target="_blank" rel="noopener">大学の掲載ページ ↗</a></header>
+<header><a class="brand" href="index.html"><span class="mark">Q</span><span>九州大学</span></a><a class="source" href="https://www.kyushu-u.ac.jp/ja/education/employment/situation/place" target="_blank" rel="noopener">大学の掲載ページ ↗</a></header>
 <main>
-<section class="intro"><p class="eyebrow">CAREER DESTINATIONS / 2013 — 2025</p><h1>学びの、その先を探す。</h1></section>
-<section class="workspace">
-<aside aria-label="絞り込み条件"><div class="filter-top"><h2>絞り込み</h2><button id="reset" class="reset">リセット</button></div>
-<div class="filter"><h3>01 <span>年度</span></h3><div id="years" class="buttons" role="group" aria-label="年度"></div></div>
-<div class="filter"><h3>02 <span>課程</span></h3><div id="degrees" class="buttons" role="group" aria-label="課程"></div></div>
-<div class="filter"><h3>03 <span>学部</span></h3><div id="faculties" class="buttons vertical" role="group" aria-label="学部"></div></div>
-<div class="filter"><h3>04 <span>学府</span></h3><div id="graduates" class="buttons vertical" role="group" aria-label="学府"></div></div>
-<p class="aside-note">学部・学府は同時に複数選択できます。未選択の場合はすべて表示します。<br>学部・学府名は各年度の資料に準拠しています。学科ごとの内訳は掲載されていません。</p>
-</aside>
-<section class="results-area" aria-label="就職先一覧"><div class="results-head"><div><p class="eyebrow" id="selection">2025年度 / すべての課程</p><h2>主な就職先 <span id="result-count"></span></h2></div></div><div id="active-filters"></div>
-
-<div id="results" aria-live="polite"></div>
+<div class="page-title"><div><p class="eyebrow">CAREER DESTINATIONS</p><h1>九州大学 就職先一覧</h1></div></div>
+<section class="filter-bar" aria-label="絞り込み条件">
+<details name="filters" class="filter-menu year-menu"><summary><span class="filter-label">年度</span><strong id="year-value">2025年度</strong><span class="menu-arrow" aria-hidden="true">⌄</span></summary><div class="filter-panel"><h2>年度を選択</h2><div id="years" class="buttons" role="group" aria-label="年度"></div></div></details>
+<details name="filters" class="filter-menu degree-menu"><summary><span class="filter-label">課程</span><strong id="degree-value">すべての課程</strong><span class="menu-arrow" aria-hidden="true">⌄</span></summary><div class="filter-panel"><h2>課程を選択</h2><div id="degrees" class="buttons" role="group" aria-label="課程"></div></div></details>
+<details name="filters" class="filter-menu units-menu"><summary><span class="filter-label">学部・学府</span><strong id="units-value">すべて</strong><span class="menu-arrow" aria-hidden="true">⌄</span></summary><div class="filter-panel units-panel"><div class="panel-heading"><h2>学部・学府を選択</h2><span>複数選択可</span></div><div class="unit-columns"><section><h3>学部</h3><div id="faculties" class="buttons vertical" role="group" aria-label="学部"></div></section><section><h3>学府</h3><div id="graduates" class="buttons vertical" role="group" aria-label="学府"></div></section></div><p class="panel-note">未選択の場合は、すべての学部・学府を表示します。</p></div></details>
+<button id="reset" class="reset">リセット</button>
 </section>
-</section>
-<footer>出典：九州大学「卒業生の主な就職先」平成25年度〜令和7年度。<br>PDFから抽出した情報です。表記や内容の確認には各就職先の元PDFをご参照ください。</footer>
+<section class="selection-summary" aria-label="現在の表示条件"><span id="selection" class="sr-only">現在の表示条件</span><div id="active-filters"></div></section>
+<section class="results-area" aria-label="就職先一覧"><div class="results-head"><h2>就職先 <span id="result-count"></span></h2><span class="sort-label">掲載件数の多い順</span></div><div id="results" aria-live="polite"></div></section>
+<footer>出典：九州大学「卒業生の主な就職先」平成25年度〜令和7年度。<br>掲載件数は就職者数ではありません。表記や内容の確認には各就職先の元PDFをご参照ください。</footer>
 </main>
 </body></html>

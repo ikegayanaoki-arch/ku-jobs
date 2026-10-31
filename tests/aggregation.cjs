@@ -69,8 +69,24 @@ assert(elements['active-filters'].innerHTML.includes('degree-masters'));
 assert.equal(elements.degrees.children.find(b=>b.textContent==='学府修士').attrs['aria-pressed'],'true');
 elements.reset.onclick();
 
+// Compact toolbar labels and year-grouped source display.
+assert.equal(elements['year-value'].textContent,'2025年度');
+assert.equal(elements['degree-value'].textContent,'すべての課程');
+assert.equal(elements['units-value'].textContent,'すべて');
+elements.faculties.children.find(b=>b.textContent==='工学部').onclick();
+elements.graduates.children.find(b=>b.textContent==='工学府').onclick();
+assert.equal(elements['units-value'].textContent,'2件を選択中');
+assert(elements.results.innerHTML.includes('class="rank">1</span>'));
+elements.years.children.find(b=>b.textContent==='すべて').onclick();
+assert.equal(elements['year-value'].textContent,'すべての年度');
+const grouped=vm.runInContext("groupedSources([data.find(r=>r.year===2024),data.find(r=>r.year===2025),data.filter(r=>r.year===2025)[1]])",ctx);
+assert.equal((grouped.match(/class="year-group"/g)||[]).length,2);
+assert(grouped.indexOf('<h4>2025年度')<grouped.indexOf('<h4>2024年度'));
+assert.equal((grouped.match(/class="provenance"/g)||[]).length,3);
+elements.reset.onclick();
+
 const records=ctx.window.EMPLOYMENT_DATA;
 assert.equal(records.length,579);
 for(const r of records){assert(Array.isArray(r.destinations)); assert(r.pdf.startsWith('https://www.kyushu-u.ac.jp/f/'));assert(!r.pdf.includes('%25'));if(r.private)assert.equal(r.destinations.length,0);}
-const index=fs.readFileSync('index.html','utf8');assert(!index.includes('id="search"'));assert(!index.includes('class="stats"'));
+const index=fs.readFileSync('index.html','utf8');assert(!index.includes('id="search"'));assert(!index.includes('class="stats"'));assert(index.includes('name="filters"'));assert(!index.includes('<aside'));assert(index.includes('<h1>九州大学 就職先一覧</h1>'));
 console.log('PASS: aggregation, width normalization, deduplication, provenance, all-year / degree / faculty filters, private records, reset, removed UI.');
